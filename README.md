@@ -5,7 +5,7 @@ It allows the user to copy reactions from ADAPT's output quickly, insted of havi
 This script is intended for the structural engineer designing concrete beams in ADAPT, to aid in laying out reactions from ADAPT's output. It is assumed that you are working with a Windows PC.
 
 ## Disclosure
-Always verify your results. It is up to the design engineer and engineer of record to verify the integrity of their design. I do NOT take responsibility for any element of the design related to the use of this script. It is merely intended to aid you in the design process.
+**None of the contributors will be liable for any element of design or construction related to the use of this software. It is the engineer's responsibility to determine adequacy of design. This tool is merely intended to aid in simplifying the design process.**
 
 ## Installation Instructions
 
