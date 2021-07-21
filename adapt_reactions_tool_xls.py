@@ -1,15 +1,16 @@
 import xlrd
 
+
 RXN_PAGE = '(10)'
+DL_TEXT = 'DL'
+SDL_TEXT = 'SDL'
+LL_TEXT = 'LL'
 
 FIRST_RXN_ROW = 6
 RXN_TYPE_COL = 2
 RXN_VAL_COL = 3
-
-DEAD_LOAD_TEXT = 'DL'
-SDL_LOAD_TEXT = 'SDL'
-LL_LOAD_TEXT = 'LL'
 MAX_SHEET_ROW = 50
+
 
 if __name__ == '__main__':
     DL = []
@@ -17,7 +18,9 @@ if __name__ == '__main__':
     LL = []
 
     while True:
-        save_path = input('\nInput Excel Save Path. Note: Can include quotation marks ". Enter "exit" to end:\n').replace('"', '')
+        save_path = input('\nInput Excel Save Path. Note: Can include '
+                          'quotation marks ". Enter "exit" to end'
+                          ':\n').replace('"', '')
         if save_path.lower() in ('quit', 'exit', 'close', 'end'):
             break      
         
@@ -29,11 +32,11 @@ if __name__ == '__main__':
             ws = excel_report.sheet_by_name(RXN_PAGE)
 
             while not seen_LL or ws.cell(cur_row, RXN_TYPE_COL).value:
-                if ws.cell(cur_row, RXN_TYPE_COL).value == DEAD_LOAD_TEXT:
+                if ws.cell(cur_row, RXN_TYPE_COL).value == DL_TEXT:
                     DL.append(ws.cell(cur_row, RXN_VAL_COL).value)
-                elif ws.cell(cur_row, RXN_TYPE_COL).value == SDL_LOAD_TEXT:
+                elif ws.cell(cur_row, RXN_TYPE_COL).value == SDL_TEXT:
                     SDL.append(ws.cell(cur_row, RXN_VAL_COL).value)
-                elif ws.cell(cur_row, RXN_TYPE_COL).value == LL_LOAD_TEXT:
+                elif ws.cell(cur_row, RXN_TYPE_COL).value == LL_TEXT:
                     LL.append(ws.cell(cur_row, RXN_VAL_COL).value)
                     if not seen_LL:
                         seen_LL = True
