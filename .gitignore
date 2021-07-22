@@ -1,3 +1,8 @@
+# User files
+adapt_reactions_tool.py
+rxns.xls
+rxns.xlsx
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
