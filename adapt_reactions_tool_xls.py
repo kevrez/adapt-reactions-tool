@@ -1,15 +1,37 @@
 import xlrd
 
+RXN_PAGE = '(5)'
 
-RXN_PAGE = '(10)'
-DL_TEXT = 'DL'
-SDL_TEXT = 'SDL'
-LL_TEXT = 'LL'
-
-FIRST_RXN_ROW = 6
+FIRST_RXN_ROW = 18
 RXN_TYPE_COL = 2
 RXN_VAL_COL = 3
-MAX_SHEET_ROW = 50
+LL_RXN_VAL_COL = 2
+
+DL_RXN_FACTOR = 1
+RXN_FACTOR = 1
+
+DEAD_LOAD_TEXT = 'SW'
+SDL_LOAD_TEXT = 'SDL'
+LL_LOAD_TEXT = 'LL'
+
+
+def find_row_from_str(ws, column, strToFind):
+    cur_row = 0
+    while cur_row < 100:
+        try:
+            val = ws.cell(cur_row, column).value
+            # print(val)
+            if str(val).startswith(strToFind):
+                return cur_row
+            cur_row += 1
+
+        except IndexError:
+            print(f'Reached end of file and {strToFind} was not found.')
+            return None
+
+    else:
+        print('Looked at many rows and found nothing.')
+        return None
 
 
 if __name__ == '__main__':
@@ -17,50 +39,55 @@ if __name__ == '__main__':
     SDL = []
     LL = []
 
-    while True:
-        save_path = input('\nInput Excel Save Path. Note: Can include '
-                          'quotation marks ". Enter "exit" to end'
-                          ':\n').replace('"', '')
-        if save_path.lower() in ('quit', 'exit', 'close', 'end'):
-            break      
-        
-        seen_LL = False
-        cur_row = FIRST_RXN_ROW
+    save_path = input(
+        '\nInput Excel Save Path. Note: Can include ":\n').replace('"', "")
+    excel_report = xlrd.open_workbook(save_path)
+    ws = excel_report.sheet_by_name(RXN_PAGE)
 
-        try:
-            excel_report = xlrd.open_workbook(save_path)
-            ws = excel_report.sheet_by_name(RXN_PAGE)
+    seen_SDL = False
+    seen_LL = False
+    cur_row = find_row_from_str(ws, 1, '5.2')
+    # print(cur_row)
 
-            while not seen_LL or ws.cell(cur_row, RXN_TYPE_COL).value:
-                if ws.cell(cur_row, RXN_TYPE_COL).value == DL_TEXT:
-                    DL.append(ws.cell(cur_row, RXN_VAL_COL).value)
-                elif ws.cell(cur_row, RXN_TYPE_COL).value == SDL_TEXT:
-                    SDL.append(ws.cell(cur_row, RXN_VAL_COL).value)
-                elif ws.cell(cur_row, RXN_TYPE_COL).value == LL_TEXT:
-                    LL.append(ws.cell(cur_row, RXN_VAL_COL).value)
-                    if not seen_LL:
-                        seen_LL = True
-                cur_row +=1
+    # DL and SDL
+    try:
+        while (not seen_SDL or ws.cell(cur_row, RXN_TYPE_COL).value) and (cur_row <= 100):
+            if ws.cell(cur_row, RXN_TYPE_COL).value == DEAD_LOAD_TEXT:
+                DL.append(ws.cell(cur_row, RXN_VAL_COL).value)
+            elif ws.cell(cur_row, RXN_TYPE_COL).value == SDL_LOAD_TEXT:
+                SDL.append(ws.cell(cur_row, RXN_VAL_COL).value)
+                if not seen_SDL:
+                    seen_SDL = True
+            cur_row += 1
+    except IndexError:
+        print(f'\nReached end of file at row {cur_row}')
 
-                if cur_row > MAX_SHEET_ROW:
-                    break
+    # LL
+    try:
+        cur_row = find_row_from_str(ws, 1, '5.4') + 4
+        while not seen_LL or ws.cell(cur_row, LL_RXN_VAL_COL).value:
+            isUnskipped = ws.cell(cur_row, LL_RXN_VAL_COL).value == ws.cell(
+                cur_row, LL_RXN_VAL_COL+1).value
+            if ws.cell(cur_row, LL_RXN_VAL_COL).value and isUnskipped:
+                LL.append(ws.cell(cur_row, LL_RXN_VAL_COL).value)
+                if not seen_LL:
+                    seen_LL = True
+            cur_row += 1
+    except IndexError:
+        print(f'Reached EOF at row {cur_row}.')
 
-        except IndexError:
-            print(f'\nReached end of file at row {cur_row}.')
+    if len(DL) == 0 or not (len(DL) == len(SDL) == len(LL)):
+        print('There was an error with reading the reactions. ', end="")
+        print('Verify that the live loads in the file are not skipped.')
+    else:
+        print(
+            f"\nFormat:\nDL\nSDL\nLL\n\nDL Reaction multiplied by {DL_RXN_FACTOR}")
+        print(f"SDL and LL Reactions multiplied by {RXN_FACTOR}")
+        for i in range(len(DL)):
+            print(f'Support {i+1}:')
+            print(f'{(DL[i] * DL_RXN_FACTOR):.2f} k')
+            print(f'{(SDL[i] * RXN_FACTOR):.2f} k')
+            print(f'{(LL[i] * RXN_FACTOR):.2f} k')
+            print()
 
-        except FileNotFoundError:
-            print('File not found.')
-            continue
-
-        if len(DL) == 0 or not (len(DL) == len(SDL) == len(LL)):
-            print("Reactions not found. Ensure that the "
-                + "'Moments, Shears, and Reactions' section is "
-                + "included in the report.")
-        else:
-            print("\nFormat:\nDL\nSDL\nLL\n")
-            for i in range(len(DL)):
-                print(f'Support {i+1}:')
-                print(f'DL = {DL[i]} k')
-                print(f'SDL = {SDL[i]} k')
-                print(f'LL = {LL[i]} k')
-        
+    input('SUCCESS\nPress Enter to exit:\n')
