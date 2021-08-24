@@ -40,6 +40,3 @@ Almost there!
 - LL
 
 Note: ***adapt_reactions_tool_xls.py*** does not yet support ADAPT's X load case.
-
-You can input as many spreadsheets as you like. To exit the program, input *'quit'*, *'exit'*, or *'close'*.'
-
