@@ -44,20 +44,15 @@ if __name__ == '__main__':
     excel_report = xlrd.open_workbook(save_path)
     ws = excel_report.sheet_by_name(RXN_PAGE)
 
-    seen_SDL = False
-    seen_LL = False
     cur_row = find_row_from_str(ws, 1, '5.2')
-    # print(cur_row)
 
     # DL and SDL
     try:
-        while (not seen_SDL or ws.cell(cur_row, RXN_TYPE_COL).value) and (cur_row <= 100):
+        while (len(SDL) == 0 or ws.cell(cur_row, RXN_TYPE_COL).value) and (cur_row <= 100):
             if ws.cell(cur_row, RXN_TYPE_COL).value == DEAD_LOAD_TEXT:
                 DL.append(ws.cell(cur_row, RXN_VAL_COL).value)
             elif ws.cell(cur_row, RXN_TYPE_COL).value == SDL_LOAD_TEXT:
                 SDL.append(ws.cell(cur_row, RXN_VAL_COL).value)
-                if not seen_SDL:
-                    seen_SDL = True
             cur_row += 1
     except IndexError:
         print(f'\nReached end of file at row {cur_row}')
@@ -65,29 +60,26 @@ if __name__ == '__main__':
     # LL
     try:
         cur_row = find_row_from_str(ws, 1, '5.4') + 4
-        while not seen_LL or ws.cell(cur_row, LL_RXN_VAL_COL).value:
+        while len(LL) == 0 or ws.cell(cur_row, LL_RXN_VAL_COL).value:
             isUnskipped = ws.cell(cur_row, LL_RXN_VAL_COL).value == ws.cell(
                 cur_row, LL_RXN_VAL_COL+1).value
             if ws.cell(cur_row, LL_RXN_VAL_COL).value and isUnskipped:
                 LL.append(ws.cell(cur_row, LL_RXN_VAL_COL).value)
-                if not seen_LL:
-                    seen_LL = True
             cur_row += 1
     except IndexError:
         print(f'Reached EOF at row {cur_row}.')
 
-    if len(DL) == 0 or not (len(DL) == len(SDL) == len(LL)):
-        print('There was an error with reading the reactions. ', end="")
+    # Output
+    if len(DL) == 0 or not len(DL) == len(SDL) == len(LL):
+        print('There was an error with reading the reactions.')
         print('Verify that the live loads in the file are not skipped.')
     else:
         print(
             f"\nFormat:\nDL\nSDL\nLL\n\nDL Reaction multiplied by {DL_RXN_FACTOR}")
         print(f"SDL and LL Reactions multiplied by {RXN_FACTOR}")
-        for i in range(len(DL)):
+        for i, _ in enumerate(DL):
             print(f'Support {i+1}:')
-            print(f'{(DL[i] * DL_RXN_FACTOR):.2f} k')
-            print(f'{(SDL[i] * RXN_FACTOR):.2f} k')
-            print(f'{(LL[i] * RXN_FACTOR):.2f} k')
+            print(f'DL: {(DL[i] * DL_RXN_FACTOR):.2f} k')
+            print(f'SD: {(SDL[i] * RXN_FACTOR):.2f} k')
+            print(f'LL: {(LL[i] * RXN_FACTOR):.2f} k')
             print()
-
-    input('SUCCESS\nPress Enter to exit:\n')
