@@ -40,3 +40,24 @@ Almost there!
 - LL
 
 Note: ***adapt_reactions_tool_xls.py*** does not yet support ADAPT's X load case.
+
+## Sample Output
+
+```
+Format:
+DL
+SDL
+LL
+
+DL Reaction multiplied by 1
+SDL and LL Reactions multiplied by 1
+Support 1:
+DL: 13.27 k
+SD: 34.22 k
+LL: 11.80 k 
+
+Support 2:
+DL: 13.27 k
+SD: 34.22 k
+LL: 11.80 k 
+```
