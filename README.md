@@ -1,6 +1,6 @@
 # ADAPT PT/RC Reactions Tool - Documentation
 This script prints reactions outputted from ADAPT in a DL-SDL-LL format, grouped by support instead of ADAPT's default, by load case.
-It allows the user to copy reactions from ADAPT's output quickly, insted of having to manually extract each reaction from the report.
+It allows the user to copy reactions from ADAPT's output quickly, instead of having to manually extract each reaction from the report.
 
 This script is intended for the structural engineer designing concrete beams in ADAPT, to aid in laying out reactions from ADAPT's output. It is assumed that you are working with a Windows PC.
 
