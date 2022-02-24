@@ -50,20 +50,15 @@ Note: ***adapt_reactions_tool_xls.py*** does not yet support ADAPT's X load case
 ## Sample Output
 
 ```
-Format:
-DL
-SDL
-LL
+Reached end of file at row 38.
 
-DL Reaction multiplied by 1
-SDL and LL Reactions multiplied by 1
 Support 1:
-DL: 13.27 k
-SD: 34.22 k
-LL: 11.80 k 
+DL: 11.15 k
+SD: 2.86 k
+LL: 12.17 k
 
 Support 2:
-DL: 13.27 k
-SD: 34.22 k
-LL: 11.80 k 
+DL: 11.15 k
+SD: 2.86 k
+LL: 12.17 k
 ```
