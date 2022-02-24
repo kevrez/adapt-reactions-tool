@@ -9,6 +9,12 @@ This script is intended for the structural engineer designing concrete beams in 
 
 ## Installation Instructions
 
+### Recommended Method
+
+Download ***ADAPT Reactions Tool V1.0.exe*** and run it from your PC.
+
+### Running via Python Interpreter
+
 1. Install Python 3.8+ if you don't already. Refer to python.org for more info.
 2. Download ***adapt_reactions_tool_xls.py***
 3. Use pip to install *xlrd* using the following command in the Python 3 interpreter:
