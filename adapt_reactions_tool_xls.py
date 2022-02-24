@@ -1,5 +1,7 @@
 import xlrd
 
+VERSION = "1.0"
+
 RXN_PAGE = '(5)'
 
 FIRST_RXN_ROW = 18
@@ -13,7 +15,11 @@ SDL_LOAD_TEXT = 'SDL'
 LL_LOAD_TEXT = 'LL'
 
 DL_RXN_FACTOR = 1
-RXN_FACTOR = 1
+LL_RXN_FACTOR = 1
+
+WELCOME_MESSAGE = (f"ADAPT Reactions Tool V{VERSION} by Kevin Reznicek for U+C\n"
+                   "This tool groups ADAPT reactions by supprt from .xls output.\n"
+                   "Make sure your results come from runs with unskipped live loads.\n")
 
 
 def find_row_from_str(sheet, column, str_to_find):
@@ -34,8 +40,15 @@ def find_row_from_str(sheet, column, str_to_find):
 
 
 def get_worksheet_from_input():
-    save_path = input(
-        '\nInput Excel Save Path. Note: Can include ":\n').replace('"', "")
+    print('Input Excel Save Path. Note: Can include "quotation marks".')
+    print("Input 'q' to quit:")
+    save_path = input().replace('"', "")
+
+    if save_path.lower() in ("q", "quit", "exit", "esc"):
+        return "QUIT"
+    if not save_path.lower().endswith(".xls"):
+        raise FileNotFoundError("Received file was not a .xls file.")
+
     excel_report = xlrd.open_workbook(save_path)
     worksheet = excel_report.sheet_by_name(RXN_PAGE)
     return worksheet
@@ -62,7 +75,7 @@ def get_DL_SDL_rxns(sheet):
                 SDL.append(sheet.cell(cur_row, RXN_VAL_COL).value)
             cur_row += 1
     except IndexError:
-        print(f'\nReached end of file at row {cur_row}')
+        print(f'\nReached end of file at row {cur_row}\n')
     return (DL, SDL)
 
 
@@ -85,7 +98,7 @@ def get_LL_rxns(sheet):
                 ll_reactions.append(current_ll_rxn)
             cur_row += 1
     except IndexError:
-        print(f'Reached EOF at row {cur_row}.')
+        print(f'\nReached end of file at row {cur_row}.\n')
 
     return ll_reactions
 
@@ -96,24 +109,33 @@ def print_reactions(DL: list[float], SDL: list[float], LL: list[float]):
         print('There was an error with reading the reactions.')
         print('Verify that the live loads in the file are not skipped.')
     else:
-        print(
-            f"\nFormat:\nDL\nSDL\nLL\n\nDL Reaction multiplied by {DL_RXN_FACTOR}")
-        print(f"SDL and LL Reactions multiplied by {RXN_FACTOR}")
+        # print(
+        #     f"\nFormat:\nDL\nSDL\nLL\n\nDL & SDL Reactions multiplied by {DL_RXN_FACTOR}")
+        # print(f"LL Reactions multiplied by {LL_RXN_FACTOR}")
         for i, _ in enumerate(DL):
             print(f'Support {i+1}:')
             print(f'DL: {(DL[i] * DL_RXN_FACTOR):.2f} k')
-            print(f'SD: {(SDL[i] * RXN_FACTOR):.2f} k')
-            print(f'LL: {(LL[i] * RXN_FACTOR):.2f} k', '\n')
+            print(f'SD: {(SDL[i] * DL_RXN_FACTOR):.2f} k')
+            print(f'LL: {(LL[i] * LL_RXN_FACTOR):.2f} k', '\n')
 
 
 def main():
-    worksheet = get_worksheet_from_input()
+    while True:
+        try:
+            worksheet = get_worksheet_from_input()
+            if worksheet == "QUIT":
+                break
+        except (FileNotFoundError, OSError):
+            print(
+                '\nInvalid file path! Ensure path starts with "P:" and file is .xls.\n\n')
+            continue
 
-    dl_rxns, sdl_rxns = get_DL_SDL_rxns(worksheet)
-    ll_rxns = get_LL_rxns(worksheet)
+        dl_rxns, sdl_rxns = get_DL_SDL_rxns(worksheet)
+        ll_rxns = get_LL_rxns(worksheet)
 
-    print_reactions(DL=dl_rxns, SDL=sdl_rxns, LL=ll_rxns)
+        print_reactions(DL=dl_rxns, SDL=sdl_rxns, LL=ll_rxns)
 
 
 if __name__ == '__main__':
+    print(WELCOME_MESSAGE)
     main()
