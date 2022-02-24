@@ -34,8 +34,8 @@ Ensure that the 'Create Optional XLS Report' option is checked. ***adapt_reactio
 1. Hold Shift and right-click the .xls file within Windows Explorer
 2. Click **'Copy as Path'**
 
-### Open the Script
-Simply run the *adapt_reactions_tool_xls.py* file using Python. You can either double click the file if Python is your default program to run *.py* files, or right click on the file and navigate to *Open With... -> Python*. Alternatively, run the script from your IDE of choice. 
+### Open the Program
+Open the executable or run the *adapt_reactions_tool_xls.py* file using your Python interpreter. 
 
 ### Output the Reactions
 Almost there!
