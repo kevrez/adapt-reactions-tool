@@ -22,6 +22,22 @@ WELCOME_MESSAGE = (f"ADAPT Reactions Tool V{VERSION} by Kevin Reznicek for U+C\n
                    "Make sure your results come from runs with unskipped live loads.\n")
 
 
+def get_worksheet_from_input():
+    print('Input Excel Save Path. Note: Can include "quotation marks".')
+    print("Input 'q' to quit:")
+    save_path = input().replace('"', "")
+
+    if save_path.lower() in ("q", "quit", "exit", "esc"):
+        return "QUIT"
+    if not save_path.lower().endswith(".xls"):
+        raise FileNotFoundError("Received file was not a .xls file.")
+
+    excel_report = xlrd.open_workbook(save_path)
+    # sheet_by_name will error with xlrd.biffh.XLRDError if there is no match
+    worksheet = excel_report.sheet_by_name(RXN_PAGE)
+    return worksheet
+
+
 def find_row_from_str(sheet, column, str_to_find):
     cur_row = 0
     while cur_row < 200:
@@ -37,21 +53,6 @@ def find_row_from_str(sheet, column, str_to_find):
 
     print('Looked at many rows and found nothing.')
     return None
-
-
-def get_worksheet_from_input():
-    print('Input Excel Save Path. Note: Can include "quotation marks".')
-    print("Input 'q' to quit:")
-    save_path = input().replace('"', "")
-
-    if save_path.lower() in ("q", "quit", "exit", "esc"):
-        return "QUIT"
-    if not save_path.lower().endswith(".xls"):
-        raise FileNotFoundError("Received file was not a .xls file.")
-
-    excel_report = xlrd.open_workbook(save_path)
-    worksheet = excel_report.sheet_by_name(RXN_PAGE)
-    return worksheet
 
 
 def get_rxn(sheet, rxn_type: str, row: int):
@@ -83,12 +84,12 @@ def get_LL_rxns(sheet):
     ll_reactions = []
     cur_row = find_row_from_str(sheet, LL_RXN_TYPE_COL, '5.4') + 4
 
-    ll_rxn_max = get_rxn(sheet, "LL", cur_row)
-    ll_rxn_min = sheet.cell(cur_row, LL_RXN_VAL_COL).value
+    ll_rxn_max = get_rxn(sheet, LL_LOAD_TEXT, cur_row)
+    ll_rxn_min = sheet.cell(cur_row, LL_RXN_VAL_COL + 1).value
     is_run_skipped = ll_rxn_max != ll_rxn_min
 
     if is_run_skipped:
-        raise Exception('Live Loads are not Skipped, verify your file input.')
+        raise ValueError('Live Loads are not Skipped, verify your file input.')
 
     try:
         current_ll_rxn = None
@@ -126,12 +127,21 @@ def main():
             if worksheet == "QUIT":
                 break
         except (FileNotFoundError, OSError):
-            print(
-                '\nInvalid file path! Ensure path starts with "P:" and file is .xls.\n\n')
+            print('\nInvalid path! Ensure path starts with "P:" and file is .xls.\n\n')
+            continue
+        except xlrd.biffh.XLRDError:
+            print("\nThe provided file doesn't contain reactions.")
+            print("Make sure that 'Moments, Shears, and Reactions '"
+                  "under 'Tabular Reports - Compact' is enabled.\n\n")
             continue
 
         dl_rxns, sdl_rxns = get_DL_SDL_rxns(worksheet)
-        ll_rxns = get_LL_rxns(worksheet)
+
+        try:
+            ll_rxns = get_LL_rxns(worksheet)
+        except ValueError as err:
+            print('\n' + err + '\n')
+            continue
 
         print_reactions(DL=dl_rxns, SDL=sdl_rxns, LL=ll_rxns)
 
