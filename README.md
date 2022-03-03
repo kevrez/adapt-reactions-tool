@@ -16,7 +16,7 @@ Download ***ADAPT Reactions Tool V1.0.exe*** and run it from your PC.
 ### Running via Python Interpreter
 
 1. Install Python 3.8+ if you don't already. Refer to python.org for more info.
-2. Download ***adapt_reactions_tool_xls.py***
+2. Download ***adapt_reactions_tool.py*** and ***adapt_reactions_parser.py*** and save them to the same folder.
 3. Use pip to install *xlrd* using the following command in the Python 3 interpreter:
 
         pip3 install xlrd
@@ -35,7 +35,7 @@ Ensure that the 'Create Optional XLS Report' option is checked. ***ADAPT Reactio
 2. Click **'Copy as Path'**
 
 ### Open the Program
-Open the executable or run the *adapt_reactions_tool_xls.py* file using your Python interpreter. 
+Open the executable or run the ***adapt_reactions_tool.py*** file using your Python interpreter. 
 
 ### Output the Reactions
 Almost there!
