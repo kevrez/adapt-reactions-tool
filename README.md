@@ -27,9 +27,9 @@ You're good to go!
 ## Use
 
 ### Output a Report from your ADAPT Run
-Once your ADAPT run is complete, output a design report for your run with 'Skip Live Load' disabled. Your report must contain the *'Moments, Shears, and Reactions'* tables under *'Tabular Reports - Compact'*. The script will currently not differentiate from a report with skipped live loads enabled vs. disabled. It is important for the engineer to be careful about this.
+Once your ADAPT run is complete, output a design report for your run with 'Skip Live Load' disabled. Your report must contain the *'Moments, Shears, and Reactions'* tables under *'Tabular Reports - Compact'*.
 
-Ensure that the 'Create Optional XLS Report' option is checked. ***adapt_reactions_tool_xls.py*** uses this file to output its results. Save this .xls file and copy its full path:
+Ensure that the 'Create Optional XLS Report' option is checked. ***ADAPT Reactions Tool*** uses this file to output its results. Save this .xls file and copy its full path:
 
 1. Hold Shift and right-click the .xls file within Windows Explorer
 2. Click **'Copy as Path'**
@@ -40,18 +40,16 @@ Open the executable or run the *adapt_reactions_tool_xls.py* file using your Pyt
 ### Output the Reactions
 Almost there!
 
-***adapt_reactions_tool_xls.py*** will prompt you for a path to an Excel sheet with reactions. Paste the path we copied before opening the script and hit Enter. The script will print the reactions from ADAPT grouped by support, and ordered by load case: 
+***ADAPT Reactions Tool*** will prompt you for a path to an Excel sheet with reactions. Paste the path you copied before opening the script and hit Enter. The script will print the reactions from ADAPT grouped by support, and ordered by load case: 
 - DL
 - SDL
 - LL
 
-Note: ***adapt_reactions_tool_xls.py*** does not yet support ADAPT's X load case.
+Note: ***ADAPT Reactions Tool*** does not yet support ADAPT's X load case.
 
 ## Sample Output
 
 ```
-Reached end of file at row 38.
-
 Support 1:
 DL: 11.15 k
 SD: 2.86 k
